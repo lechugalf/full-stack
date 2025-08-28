@@ -1,22 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const { createFileService } = require("../utils/fileService");
-
-const fileService = createFileService("items.json");
+const { getStats } = require("../controllers/stats.controller");
 
 // GET /api/stats
-router.get("/", async (_, res, next) => {
-  try {
-    const items = await fileService.readData();
-    const stats = {
-      total: items.length,
-      averagePrice:
-        items.reduce((acc, cur) => acc + cur.price, 0) / items.length,
-    };
-    res.json(stats);
-  } catch (err) {
-    next(err);
-  }
-});
+router.get("/", getStats);
 
 module.exports = router;
