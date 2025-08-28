@@ -10,3 +10,10 @@ Current implementation loads the entire JSON files into memory, which is not goo
 ### 2. Cache Stats
 
 I decied to implement a very simple singleton class to manage a Map for caching values, this solution fits for the current needs of the project (only caching the stats). Singleton ensure only one instance of Map to store key/value during the life of the app. The values are revalidated everytime new items are added. The solution could be reusable for caching other data. Also added unit testings for this.
+
+**Additional**
+Added simple request validation to addItem controller.
+
+### 3. Unit Testing
+
+Added unit tests for the items controller, I created happy path and corner case scenarios for each controller: getItem, getItemById, and addItem. Test is using Jest mocks for dependencies of items controller (fileService and Cache). Tests follows Prepare > Action > Assert flow.
