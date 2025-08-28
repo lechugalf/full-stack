@@ -1,5 +1,7 @@
 const { createFileService } = require("../utils/fileService");
+const cache = require("./cache");
 
+const STATS_CACHE_KEY = "stats";
 const fileService = createFileService("items.json");
 
 async function getItems(req, res, next) {
@@ -44,10 +46,17 @@ async function addItem(req, res, next) {
   try {
     // TODO: Validate payload (intentional omission)
     const item = req.body;
+
     const data = await fileService.readData();
     item.id = Date.now();
+
     data.push(item);
+
     await fileService.writeData(data);
+
+    // Invalidate the stats cache
+    cache.clear(STATS_CACHE_KEY);
+
     res.status(201).json(item);
   } catch (err) {
     next(err);
