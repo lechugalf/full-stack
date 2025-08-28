@@ -1,23 +1,22 @@
-const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const express = require("express");
 const router = express.Router();
-const DATA_PATH = path.join(__dirname, '../../data/items.json');
+const { createFileService } = require("../utils/fileService");
+
+const fileService = createFileService("items.json");
 
 // GET /api/stats
-router.get('/', (req, res, next) => {
-  fs.readFile(DATA_PATH, (err, raw) => {
-    if (err) return next(err);
-
-    const items = JSON.parse(raw);
-    // Intentional heavy CPU calculation
+router.get("/", async (_, res, next) => {
+  try {
+    const items = await fileService.readData();
     const stats = {
       total: items.length,
-      averagePrice: items.reduce((acc, cur) => acc + cur.price, 0) / items.length
+      averagePrice:
+        items.reduce((acc, cur) => acc + cur.price, 0) / items.length,
     };
-
     res.json(stats);
-  });
+  } catch (err) {
+    next(err);
+  }
 });
 
 module.exports = router;
