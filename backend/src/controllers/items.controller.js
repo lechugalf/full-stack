@@ -1,5 +1,5 @@
 const { createFileService } = require("../utils/fileService");
-const cache = require("./cache");
+const cache = require("../utils/cache");
 
 const STATS_CACHE_KEY = "stats";
 const fileService = createFileService("items.json");
