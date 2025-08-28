@@ -17,3 +17,7 @@ Added simple request validation to addItem controller.
 ### 3. Unit Testing
 
 Added unit tests for the items controller, I created happy path and corner case scenarios for each controller: getItem, getItemById, and addItem. Test is using Jest mocks for dependencies of items controller (fileService and Cache). Tests follows Prepare > Action > Assert flow.
+
+### 4. Memory Leak in Item Component
+
+Instead of using a flag, I decided to use the AbortController API to abort requests if the useEffect cleanup function.

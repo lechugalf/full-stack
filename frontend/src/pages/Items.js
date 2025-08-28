@@ -1,29 +1,29 @@
-import React, { useEffect } from 'react';
-import { useData } from '../state/DataContext';
-import { Link } from 'react-router-dom';
+import React, { useEffect } from "react";
+import { useData } from "../state/DataContext";
+import { Link } from "react-router-dom";
 
 function Items() {
   const { items, fetchItems } = useData();
 
   useEffect(() => {
-    let active = true;
+    const abortController = new AbortController();
 
-    // Intentional bug: setState called after component unmount if request is slow
-    fetchItems().catch(console.error);
+    fetchItems(abortController.signal).catch((err) => {
+      if (err !== "AbortError") console.error(err);
+    });
 
-    // Clean‑up to avoid memory leak (candidate should implement)
     return () => {
-      active = false;
+      abortController.abort("component unmounted");
     };
-  }, [fetchItems]);
+  }, []);
 
   if (!items.length) return <p>Loading...</p>;
 
   return (
     <ul>
-      {items.map(item => (
+      {items.map((item) => (
         <li key={item.id}>
-          <Link to={'/items/' + item.id}>{item.name}</Link>
+          <Link to={"/items/" + item.id}>{item.name}</Link>
         </li>
       ))}
     </ul>
