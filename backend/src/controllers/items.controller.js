@@ -44,8 +44,10 @@ async function getItemById(req, res, next) {
 
 async function addItem(req, res, next) {
   try {
-    // TODO: Validate payload (intentional omission)
     const item = req.body;
+
+    // Throws an error with 400 status if validation fails
+    _validateItem(item);
 
     const data = await fileService.readData();
     item.id = Date.now();
@@ -60,6 +62,35 @@ async function addItem(req, res, next) {
     res.status(201).json(item);
   } catch (err) {
     next(err);
+  }
+}
+
+// TODO: More robust validation using a library like Zod, Joi, etc.
+// or separating and making logic reusable
+// TODO: Implement custom errors for better error handling
+function _validateItem(item) {
+  if (!item || typeof item !== "object") {
+    const err = new Error("Invalid item");
+    err.status = 400;
+    throw err;
+  }
+
+  if (!item.name || typeof item.name !== "string") {
+    const err = new Error("Invalid item 'name'");
+    err.status = 400;
+    throw err;
+  }
+
+  if (!item.category || typeof item.category !== "string") {
+    const err = new Error("Invalid item 'category'");
+    err.status = 400;
+    throw err;
+  }
+
+  if (item.price == null || typeof item.price !== "number" || item.price < 0) {
+    const err = new Error("Invalid item 'price'");
+    err.status = 400;
+    throw err;
   }
 }
 
