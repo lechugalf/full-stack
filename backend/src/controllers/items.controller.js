@@ -7,7 +7,7 @@ const fileService = createFileService("items.json");
 async function getItems(req, res, next) {
   try {
     const data = await fileService.readData();
-    const { limit, q } = req.query;
+    const { q, limit: strLimit, page: strPage } = req.query;
     let results = data;
 
     if (q) {
@@ -17,8 +17,13 @@ async function getItems(req, res, next) {
       );
     }
 
-    if (limit) {
-      results = results.slice(0, parseInt(limit));
+    const limit = parseInt(strLimit, 10);
+    const page = parseInt(strPage, 10) || 1;
+
+    if (!isNaN(limit) && limit > 0) {
+      const start = (page - 1) * limit;
+      const end = start + limit;
+      results = results.slice(start, end);
     }
 
     res.json(results);

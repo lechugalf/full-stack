@@ -142,6 +142,73 @@ describe("Items Controller", () => {
     });
   });
 
+  describe("getItems (with pagination)", () => {
+    beforeEach(() => {
+      mockFileService.readData.mockResolvedValue([...mockItems]);
+    });
+
+    it("should return all items when no query parameters are provided", async () => {
+      await getItems(mockReq, mockRes, mockNext);
+
+      expect(mockRes.json).toHaveBeenCalledWith(mockItems);
+    });
+
+    it("should apply limit only", async () => {
+      mockReq.query.limit = "2";
+
+      await getItems(mockReq, mockRes, mockNext);
+
+      expect(mockRes.json).toHaveBeenCalledWith(mockItems.slice(0, 2));
+    });
+
+    it("should apply page and limit for pagination", async () => {
+      mockReq.query.limit = "1";
+      mockReq.query.page = "2"; // second page, 1 item per page
+
+      await getItems(mockReq, mockRes, mockNext);
+
+      expect(mockRes.json).toHaveBeenCalledWith([mockItems[1]]);
+    });
+
+    it("should apply query and pagination together", async () => {
+      mockReq.query.q = "e"; // matches "Gamer Laptop" and "Smartphone"
+      mockReq.query.limit = "1";
+      mockReq.query.page = "2"; // second matching item
+
+      await getItems(mockReq, mockRes, mockNext);
+
+      expect(mockRes.json).toHaveBeenCalledWith([mockItems[2]]); // "Smartphone"
+    });
+
+    it("should default to page 1 when only limit is provided", async () => {
+      mockReq.query.limit = "2";
+
+      await getItems(mockReq, mockRes, mockNext);
+
+      expect(mockRes.json).toHaveBeenCalledWith(mockItems.slice(0, 2));
+    });
+
+    it("should handle non-matching query", async () => {
+      mockReq.query.q = "nonexistent";
+      mockReq.query.limit = "2";
+      mockReq.query.page = "1";
+
+      await getItems(mockReq, mockRes, mockNext);
+
+      expect(mockRes.json).toHaveBeenCalledWith([]);
+    });
+
+    it("should handle file service errors", async () => {
+      const error = new Error("File read error");
+      mockFileService.readData.mockRejectedValue(error);
+
+      await getItems(mockReq, mockRes, mockNext);
+
+      expect(mockNext).toHaveBeenCalledWith(error);
+      expect(mockRes.json).not.toHaveBeenCalled();
+    });
+  });
+
   describe("getItemById", () => {
     beforeEach(() => {
       mockFileService.readData.mockResolvedValue([...mockItems]);
