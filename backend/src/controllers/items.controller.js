@@ -22,8 +22,13 @@ async function getItems(req, res, next) {
 
     if (!isNaN(limit) && limit > 0) {
       const start = (page - 1) * limit;
-      const end = start + limit;
-      results = results.slice(start, end);
+
+      if (start >= results.length) {
+        results = [];
+      } else {
+        const end = Math.min(start + limit, results.length);
+        results = results.slice(start, end);
+      }
     }
 
     res.json(results);
