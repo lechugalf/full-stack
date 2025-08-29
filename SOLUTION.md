@@ -28,3 +28,6 @@ I added simple pagination logic in server side by introducing a page query param
 Frontend was updated to fetch results on every query string change (debounded a few milisec to only send minimal num of request after user finished typing) and when paginating using prev and next buttons. I added a debounced. This component can be improved a lot by using a library like react query, and even state can be reduced.
 
 ### 6. Vistualization List
+
+Added very simple virtualization with TanStack react-virtual library. This allows to render only the items that fits in the list container. This approach can also be extended to implement
+infinite scrolling with optimized render. That could replace the prev, next pagination approach.

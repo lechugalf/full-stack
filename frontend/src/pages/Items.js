@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { useData } from "../state/DataContext";
 import { Link } from "react-router-dom";
 
-const PAGE_LIMIT = 2;
+const PAGE_LIMIT = 10;
 
 function Items() {
   const [loadingResults, setLoadingResults] = useState(false);
@@ -38,16 +39,64 @@ function Items() {
     };
   }, [fetchItems, debouncedQuery, currPage]);
 
-  console.log(currPage, items.length);
+  const parentRef = useRef();
+
+  // virtualizer setup
+  const rowVirtualizer = useVirtualizer({
+    count: items.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 40, // approximate height of each item
+    overscan: 2,
+  });
 
   return (
     <ul>
       <input
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className="block min-w-0 grow py-1.5 pr-3 pl-1 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+        className=""
       />
-      {loadingResults ? <p>Loading...</p> : <ItemList items={items} />}
+      {loadingResults ? (
+        <p>Loading...</p>
+      ) : (
+        <div
+          ref={parentRef}
+          style={{
+            height: "200px",
+            overflow: "auto",
+            border: "1px solid #ccc",
+          }}
+        >
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              position: "relative",
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const item = items[virtualRow.index];
+              return (
+                <div
+                  key={item.id}
+                  ref={virtualRow.measureElement}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    transform: `translateY(${virtualRow.start}px)`,
+                    padding: "8px",
+                    boxSizing: "border-box",
+                    borderBottom: "1px solid #eee",
+                  }}
+                >
+                  <Link to={"/items/" + item.id}>{item.name}</Link>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
       <button onClick={() => currPage > 1 && setCurrPage(currPage - 1)}>
         Prev
       </button>
