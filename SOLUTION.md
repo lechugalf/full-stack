@@ -21,3 +21,10 @@ Added unit tests for the items controller, I created happy path and corner case 
 ### 4. Memory Leak in Item Component
 
 Instead of using a flag, I decided to use the AbortController API to abort requests if the useEffect cleanup function.
+
+### 5. Add Pagination logic
+
+I added simple pagination logic in server side by introducing a page query param in items endpoint `GET api/items?q='Laptop'&limit=12&page=2``
+Frontend was updated to fetch results on every query string change (debounded a few milisec to only send minimal num of request after user finished typing) and when paginating using prev and next buttons. I added a debounced. This component can be improved a lot by using a library like react query, and even state can be reduced.
+
+### 6. Vistualization List
