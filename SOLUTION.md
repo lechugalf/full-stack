@@ -31,3 +31,7 @@ Frontend was updated to fetch results on every query string change (debounded a 
 
 Added very simple virtualization with TanStack react-virtual library. This allows to render only the items that fits in the list container. This approach can also be extended to implement
 infinite scrolling with optimized render. That could replace the prev, next pagination approach.
+
+### 7. Improve styles
+
+Added TailwindCSS thorugh CDN for simplicity (not recommended for prodution or more complex app ). Added simple styles in UI components and responsiveness.

@@ -50,21 +50,23 @@ function Items() {
   });
 
   return (
-    <ul>
+    <div className="max-w-xl mx-auto p-4">
       <input
+        placeholder="Buscar"
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full p-2 mb-4 rounded border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-lg"
       />
       {loadingResults ? (
-        <p>Loading...</p>
+        <p className="text-center text-blue-400">Loading...</p>
       ) : (
         <div
           ref={parentRef}
           style={{
             height: "200px",
             overflow: "auto",
-            border: "1px solid #ccc",
           }}
+          className="h-64 overflow-auto border border-blue-100 rounded-lg "
         >
           <div
             style={{
@@ -88,23 +90,39 @@ function Items() {
                     boxSizing: "border-box",
                     borderBottom: "1px solid #eee",
                   }}
+                  className="px-3 py-2 border-b border-blue-100 hover:bg-blue-100 transition-colors"
                 >
                   <Link to={"/items/" + item.id}>{item.name}</Link>
                 </div>
               );
             })}
+            {items.length === 0 && (
+              <p className="w-full text-center p-6 text-neutral-500">
+                Not found results
+              </p>
+            )}
           </div>
         </div>
       )}
-      <button onClick={() => currPage > 1 && setCurrPage(currPage - 1)}>
-        Prev
-      </button>
-      <button
-        onClick={() => items.length === PAGE_LIMIT && setCurrPage(currPage + 1)}
-      >
-        Next
-      </button>
-    </ul>
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => currPage > 1 && setCurrPage(currPage - 1)}
+          className="px-4 py-2 bg-blue-200 text-blue-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={currPage === 1}
+        >
+          Previous
+        </button>
+        <button
+          onClick={() =>
+            items.length === PAGE_LIMIT && setCurrPage(currPage + 1)
+          }
+          className="px-4 py-2 bg-blue-200 text-blue-800 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={items.length < PAGE_LIMIT}
+        >
+          Next
+        </button>
+      </div>
+    </div>
   );
 }
 
