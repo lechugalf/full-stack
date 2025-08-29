@@ -54,7 +54,6 @@ function Items() {
       <input
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
-        className=""
       />
       {loadingResults ? (
         <p>Loading...</p>
@@ -105,18 +104,6 @@ function Items() {
       >
         Next
       </button>
-    </ul>
-  );
-}
-
-function ItemList({ items = [] }) {
-  return (
-    <ul>
-      {items.map((item) => (
-        <li key={item.id}>
-          <Link to={"/items/" + item.id}>{item.name}</Link>
-        </li>
-      ))}
     </ul>
   );
 }
